@@ -1,0 +1,35 @@
+{
+    "factories": [
+        {
+            "name": "BR1",
+            "employees": [
+                "John",
+                "Alice",
+                "Bob",
+                "Jessie",
+                "Karen"
+            ]
+        },
+        {
+            "name": "BR2",
+            "employees": [
+                "Jessie",
+                "Karen",
+                "John"
+            ]
+        },
+        {
+            "name": "BR3",
+            "employees": [
+                "Miles",
+                "Eric",
+                "Henry",
+                "Bob"
+            ]
+        },
+        {
+            "name": "BR4",
+            "employees": []
+        }
+    ]
+}
