@@ -109,6 +109,7 @@
                     console.log(this.hr_sum)
                 }
             }, howManyEmployeeByTime(time) {
+                /**找出白天工作的員工id*/
                 for (let i = 0; i < this.many.data.employeeType.length; i++) {
                     time = this.many.data.employeeType[i].work_begin.split(":")[0]
                     if (time < 17) {
@@ -119,7 +120,6 @@
 
                 
             }, howManyDayDoneTask() {
-                /**找出白天工作的員工id*/
                 let day = 24 - 9;
                 let sum = 0;
                 for (let i = 0; i < this.many.data.tasks.length; i++) {
