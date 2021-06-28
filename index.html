@@ -111,7 +111,6 @@
                 })
             }, howManyDayDoneTask() {
                 let day = 24 - 9;
-                let sum = 0;
                 this.many.data.tasks.forEach(item => {
                     this.done_sum += (item.duration / 60 / day)
                 });
