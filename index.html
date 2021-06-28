@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +8,6 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js'></script>
     <script src="https://unpkg.com/vue@next"></script>
 </head>
-
 <body>
     <div id='counter'>
 
@@ -20,12 +18,8 @@
             </li>
         </ul>
         <button @click.stop="get_num()">2.Count Factories Number by Employee</button>
-        <ul>
-            <li v-for="(item, index) in ep_work_sum">
-                {{ item }}
-            </li>
-        </ul>
-        <button @click.stop="get_name()">3.ep_name</button>
+        <p>{{ ep_work_sum }}</p>
+        <button @click.stop="get_name()">3.get_name_sort</button>
         <ul>
             <li v-for="(item, index) in ep_name">
                 {{ item }}
@@ -55,7 +49,7 @@
                 factory: null,//取factory.json
                 many: null,//取many.json
                 ep_cnt: [],//ep_sum
-                ep_work_sum: [],//get_num
+                ep_work_sum: null,//get_num
                 ep_name: [],//get_name
                 hr_sum: null,//get_hr_toal
                 id: [],//howManyEmployeeByTime
@@ -74,62 +68,56 @@
         },
         methods: {
             ep_sum() {
-                for (let i = 0; i < this.factory.data.factories.length; i++) {
-                    this.ep_cnt.push('{name:' + this.factory.data.factories[i].name + ', count:' + this.factory.data.factories[i].employees.length + '}')
-                }
+                this.factory.data.factories.forEach(item => { 
+                    this.ep_cnt.push('{name:' + item.name + ', count:' + item.employees.length + '}')
+                })
             }, get_num() {
-                /**晚點使用 foreach*/
-                let cnt = 1;
-                for (let i = 0; i < this.factory.data.factories.length; i++) {
-                    for (let j = 0; j < this.factory.data.factories[i].employees.length; j++) {
-                        if (this.factory.data.factories[i].employees[i] === this.factory.data.factories[i].employees[j]) {
-                            cnt = cnt + 1
-                            this.ep_work_sum.push('{employee:' + this.factory.data.factories[i].employees[i] + ' , count:' + cnt + '}')
-                            cnt = 1
-                        }
-                    }
-                }
+                let ep = []
+                this.factory.data.factories.forEach(item => {
+                    item.employees.forEach(item => {
+                        ep.push(item)
+                    })
+                })
+                this.ep_work_sum = ep.reduce((x, item) => {
+                    if (item in x) x[item]=x[item]+1
+                    else   x[item] = 1
+                    return x
+                }, {})
             },
-            get_name(d) {
-                for (let i = 0; i < this.factory.data.factories.length; i++) {
-                    this.ep_name.push('{name:' + this.factory.data.factories[i].name + ', employees:' + this.factory.data.factories[i].employees.sort() + '}')
-                }
+            get_name() {
+                this.factory.data.factories.forEach(item => {
+                    this.ep_name.push('{name:' + item.name + ', employees:' + item.employees.sort() + '}')
+                });
+
             }, get_hr_toal() {
-                /**需要修改*/
-                let x;
-                let y = [];
-                for (let i = 0; i < this.many.data.employeeType.length; i++) {
-                    if (this.many.data.employeeType[i].work_end.split(":")[0] === '00') {
-                        x = (parseInt(this.many.data.employeeType[i].work_end.split(":")[0]) + 24) - this.many.data.employeeType[i].work_begin.split(":")[0]
-                    }
-                    if (this.many.data.employeeType[i].work_end.split(":")[0] !== '00') {
-                        y[i] = this.many.data.employeeType[i].work_end.split(":")[0] - this.many.data.employeeType[i].work_begin.split(":")[0]
-                    }
-                    this.hr_sum = x + y[0] + y[1];
-                    console.log(this.hr_sum)
-                }
+                let sum=[];                
+                this.many.data.employeeType.forEach(item => {
+                    let end=parseInt(item.work_end.split(":")[0])
+                    let start=parseInt(item.work_begin.split(":")[0])
+                    if (end===0) end=24;
+                    if (start===0) start=24
+                    sum.push(Math.abs(start-end))
+                })
+                this.hr_sum=sum.reduce((a,b)=>{
+                return a+b})
+                console.log(this.hr_sum)
             }, howManyEmployeeByTime(time) {
-                /**找出白天工作的員工id*/
-                for (let i = 0; i < this.many.data.employeeType.length; i++) {
-                    time = this.many.data.employeeType[i].work_begin.split(":")[0]
+                this.many.data.employeeType.forEach(item => {
+                    time = item.work_begin.split(":")[0]
                     if (time < 17) {
-                        this.id.push('{id:' + this.many.data.employeeType[i].id + '}')
+                        this.id.push('{id:' + item.id + '}')
                     }
-
-                }
-
-                
+                })
             }, howManyDayDoneTask() {
+                /**找出白天工作的員工id*/
                 let day = 24 - 9;
                 let sum = 0;
-                for (let i = 0; i < this.many.data.tasks.length; i++) {
-                     this.done_sum += (this.many.data.tasks[i].duration /60/day);
-                }
-
+                this.many.data.tasks.forEach(item => {
+                    this.done_sum += (item.duration / 60 / day)
+                });
             }
         }
     }
-
     Vue.createApp(Counter).mount('#counter')
 
 
