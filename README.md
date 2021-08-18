@@ -1,7 +1,5 @@
 
 
-https://lundic2020.tk/test is index.html demo
-
 ### JS Test
 
 For any question of this document, we aren't waiting for a number or answer, but we are waiting for javascript functions.
